@@ -85,14 +85,11 @@ var createScene = async function () {
     inputTextArea.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM
     container.addControl(inputTextArea)
 
-    let newText = null;
-
     window.addEventListener("keypress", (e) => {
         if (e.key == "Enter") {
             myText.dispose();
-            if (newText != null) newText.dispose()
 
-            newText = BABYLON.MeshBuilder.CreateText("myText", inputTextArea.text, fontData, {
+            myText = BABYLON.MeshBuilder.CreateText("myText", inputTextArea.text, fontData, {
                 size: 16,
                 resolution: 64,
                 depth: 10
@@ -101,6 +98,22 @@ var createScene = async function () {
 
         }
     })
+
+    var textMaterial = new BABYLON.StandardMaterial("textMaterial", scene);
+    myText.material = textMaterial
+
+    var picker = new BABYLON.GUI.ColorPicker();
+
+    picker.value = textMaterial.diffuseColor;
+    picker.height = "150px";
+    picker.width = "150px";
+    picker.horizontalAlignment = BABYLON.GUI.Control.HORIZONTAL_ALIGNMENT_LEFT;
+    picker.verticalAlignment = BABYLON.GUI.Control.VERTICAL_ALIGNMENT_BOTTOM;
+    picker.onValueChangedObservable.add(function (value) { // value is a color3
+        textMaterial.diffuseColor.copyFrom(value);
+    });
+    container.addControl(picker)
+
 
     var button = BABYLON.GUI.Button.CreateSimpleButton("but", "Export to GLB");
     button.width = 0.18;
